@@ -6,7 +6,14 @@
             <div class="navbar-brand">
               <h3>Bytefury</h3>
             </div>
-            <button class="btn btn-dark float-rght" @click="logout()">Logout</button>
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <button @click="logout()" class="btn btn-dark">Logout</button>
+                </li>
+                <li class="nav-item ml-2">
+                    <button class="btn border btn-dark" data-target="#mod1" data-toggle="modal">Add It</button>
+                </li>
+            </ul>
          </div>
       </nav>
       <div class="container mt-5">
@@ -47,7 +54,7 @@
                                                     <button type="button" class="btn mkdark ml-2 btn-default btn-sm float-right">
                                                         <i class="fa fa-pencil" style="font-size:20px"></i>
                                                     </button>
-                                                    <button type="button" class="btn mkdark btn-default btn-sm float-right">
+                                                    <button type="button" @click="del1(key)" class="btn mkdark btn-default btn-sm float-right">
                                                         <i class="fa fa-trash" style="font-size:20px"></i>
                                                     </button>
                                                   </div>
@@ -81,7 +88,7 @@
                                                     <button type="button" class="btn ml-2 mkdark btn-default btn-sm float-right">
                                                      <i class="fa fa-pencil" style="font-size:20px"></i>
                                                     </button>
-                                                    <button type="button" class="btn mkdark btn-default btn-sm float-right">
+                                                    <button type="button" @click="del2(key)" class="btn mkdark btn-default btn-sm float-right">
                                                         <i class="fa fa-trash" style="font-size:20px"></i>
                                                     </button>
                                                   </div>
@@ -89,7 +96,20 @@
                                         </div>
                                     </div>
                                 </div>
-                            
+                                <div v-for="(takeit ,key) in imgDetail" :key="key">
+                                    <div class="card mt-5 mb-5">
+                                        <div class="card-header mkbgdark text-white">
+                                            <div class="card-title">
+                                                <h2> {{ takeit.title}}</h2>
+                                            </div>  
+                                        </div>
+                                         <div class="card-body">
+                                                <label>
+                                                        {{ takeit.description }}
+                                                </label>
+                                            </div>
+                                    </div>
+                                </div>
                         </div>
                         <div class="col-sm-12 col-md-4">
                                  <div class="card mt-3 shadow-lg">
@@ -141,12 +161,48 @@
                                         </form>
                                     </div>
                                 </div> 
-                         </div>
+                             </div>
+                         
                      </div>
                 </div>               
             </div>
          </div>
-   </div>
+         <div class="modal fade" id="mod1">
+            <div class="modal-dialog">
+            <div class="modal-content"> 
+
+                <div class="modal-header">
+                    <h4 class="modal-title">Add Post</h4>
+                    <button type="button" class="close" data-dismiss="modal">×</button>
+                </div>
+                
+                <div class="modal-body">
+                    <form>
+                        <div class="form-group">
+                            <h3>Title</h3>
+                            <input type="text" v-model="title" class="form-control"/>
+                        </div>
+                        <div class="form-group">
+                            <h3>Select File</h3>
+                            <button class="btn btn-danger" @click="uploadFile()">Upload</button>
+                            <input type="file"  accept="image/*" @change="onFilePicked" ref="fileMenu" class="form-control" style="display:none;"/>
+                            <img :src="imageUrl" style="height:100%; width:100%;"/>
+                        </div>
+                        <div class="form-group  mt-5">
+                            <h3>description</h3>
+                            <textarea type="text" cols="50" rows="5"  v-model="description" class="from-control"></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                  <button type="button" class="btn btn-danger" @click="upload()" data-dismiss="modal">Upload</button>
+                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                </div>
+        
+        </div>
+        </div>
+  </div>
+      </div>
    </div>
 </template>
 
@@ -166,10 +222,25 @@ export default {
       com1:'',
       com2:'',
       cmt1:[],
-      cmt2:[]
+      cmt2:[],
+     title:'',
+     imgDetail:[],
+     description:null,
+     imageName:null
     }
   },
   methods:{
+      upload(){
+          firebase.database().ref('postIt').push({title : this.title , description: this.description , image : this.imageName})
+            .then((data)=> console.log(data))
+            .catch((e) =>{
+                alert(e);
+            })
+            this.title =null;
+            this.description= null;
+            this.Image= null;
+            this.imageUrl = null;
+      },
     logout(){
         firebase.auth().signOut()
         .then(()=>{
@@ -177,7 +248,7 @@ export default {
         })
     },
     comFirst(){
-        firebase.database().ref('Comment1').push({commentFirst : this.com1})
+        firebase.database().ref('Comment1').push({commentFirst : this.com1, see1 : false})
         .then((data)=>console.log(data))
         .catch((e)=>{
             alert(e);
@@ -186,14 +257,37 @@ export default {
         this.com1 = null;  
     },
     comSecond(){
-        firebase.database().ref('Comment2').push({commentSecond : this.com2})
+        firebase.database().ref('Comment2').push({commentSecond : this.com2, see2 : false})
         .then((data)=>console.log(data))
         .catch((e)=>{
             alert(e)
         })
         ;
         this.com2 = null
-    }
+    },
+    onFilePicked(event){
+        const files = event.target.files
+        let filename = files[0].name
+        if(filename.lastIndexOf('.') <= 0){
+            return alert("please enter a valid file!!")
+        }
+        const fileReader = new FileReader()
+        fileReader.addEventListener('load', () => {
+            this.imageUrl = fileReader.result
+        })
+        fileReader.readAsDataURL(files[0])
+        this.imageName = `require('../assets/${files[0].name})`
+        console.log(filename);
+    },
+    del1(key){
+          firebase.database().ref('Comment1/'+ key).remove();
+      },
+    del2(key){
+          firebase.database().ref('Comment2/'+ key).remove();
+      },
+      uploadFile(){
+          this.$refs.fileMenu.click();
+      }
   },
   created(){
       firebase.database().ref('Comment1').on('value',(snapshot)=>{
@@ -201,6 +295,9 @@ export default {
       })
       firebase.database().ref('Comment2').on('value',(snapshot)=>{
           this.cmt2=snapshot.val();
+      })
+      firebase.database().ref('postIt').on('value',(snapshot)=>{
+          this.imgDetail=snapshot.val();
       })
   }
 }
@@ -231,6 +328,9 @@ export default {
             background:black;
             color:white;
             border:white 1px solid;
+        }
+        .mkbgdark{
+            background:black;
         }
         .mkdark:hover{
             background:white;
