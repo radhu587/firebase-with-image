@@ -1,7 +1,6 @@
   <template>
     <div class="hello">
         <nav class="navbar navbar-expand-sm navbar-dark bg-dark mt-1 sticky-top">
-         
             <div class="container">
                     <div class="navbar-brand">
                       <h3>Bytefury</h3>

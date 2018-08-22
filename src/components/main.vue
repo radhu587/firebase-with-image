@@ -1,32 +1,52 @@
 <template>
   <div class="main">
     <div>  
-         <nav class="navbar navbar-expand-sm navbar-dark bg-dark mt-1 sticky-top">
+        <!--Navigator bar-->
+         <nav class="navbar navbar-expand-sm mkbgdark text-white mt-1 sticky-top">
           <div class="container"> 
             <div class="navbar-brand">
               <h3>Bytefury</h3>
             </div>
             <ul class="navbar-nav">
                 <li class="nav-item">
-                    <button @click="logout()" class="btn btn-dark">Logout</button>
+                    <button @click="logout()" class="btn mkbgdark text-white">Logout</button>
                 </li>
-                <li class="nav-item ml-2">
-                    <button class="btn border btn-dark" data-target="#mod1" data-toggle="modal">Add It</button>
-                </li>
+                <li class="nav-item ml-5">
+                  <button class="btn mkBtnDark rounded-circle px-3" data-target="#try2" data-toggle="modal" alt="add post" style="font-size:25px;">+</button>
+                 </li>
             </ul>
          </div>
       </nav>
+      <div class="modal fade" id="try2">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h1 class="modal-title">Add Post</h1>
+              <button class="btn text-white bg-danger" style="color:white;" data-dismiss="modal">X</button>
+            </div>
+            <div class="modal-body">
+              <label>Title</label>
+              <input tpye="text" v-model="title" class="form-control" placeholder="Title"/>
+              <label class="mt-3">Description</label>
+              <textarea class="form-control" v-model="descript" type="text" placeholder="Description" cols="50"></textarea>
+              <button class="btn btn-danger mx-auto mt-3" @click="uploadPost()" data-dismiss="modal">Submit</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="container mt-5">
+          <!-- Main Card -->
             <div class="card pt-5">
                 <div class="card-header bg-white  mx-auto">
                      <h1 >BYTE BLOGLIFE</h1>
                      <p>Welcome to <span class="text-white mkdark p-2" style="font-weight:bold;">Byte World</span></p>
                 </div>
                    <img :src="image2" class="" style="width:100% ;" >
-                
                 <div class="card-footer bg-white ">
                     <div class="row">
                         <div class="col-sm-12 col-md-8">
+                             <!-- First Child Card-->
                                 <div class="card mt-3 pt-2 shadow-lg">
                                     <div class="card-header mx-auto mt-4 bg-white">
                                         <h1 class="card-title">BOOTSTRAP</h1>
@@ -42,6 +62,7 @@
                                             <button class="btn btn-outline-dark like btn-dark float-right " style="font-weight:bold;">LIKE</button>
                                         </div>
                                     </div>
+                                    <!--First comment Section -->
                                     <div class=" collapse " id="foot1">
                                           <hr>
                                          <form class="p-3">
@@ -62,6 +83,7 @@
                                         </div>
                                     </div>
                                 </div>
+                                <!--second child card-->
                                 <div class="card mt-4 shadow-lg mb-5">
                                     <div class="card-header mx-auto mt-4 bg-white">
                                         <h1>STYLE-SHEET</h1>
@@ -77,6 +99,7 @@
                                             <button class="btn btn-outline-dark like btn-dark float-right " style="font-weight:bold;">LIKE</button>
                                         </div>
                                     </div>
+                                    <!-- second comment section-->
                                     <div id="foot2" class=" collapse">
                                         <form class="p-3">
                                             <input tpye="text" class="form-control" v-model="com2"  placeholder="Enter your Commnet" @keyup.enter="comSecond()"/>
@@ -92,26 +115,56 @@
                                                         <i class="fa fa-trash" style="font-size:20px"></i>
                                                     </button>
                                                   </div>
-                                            </div>
+                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                <div v-for="(takeit ,key) in imgDetail" :key="key">
-                                    <div class="card mt-5 mb-5">
-                                        <div class="card-header mkbgdark text-white">
-                                            <div class="card-title">
-                                                <h2> {{ takeit.title}}</h2>
-                                            </div>  
-                                        </div>
-                                         <div class="card-body">
-                                                <label>
-                                                        {{ takeit.description }}
-                                                </label>
+                                      <div class="container mb-5" v-for="(post , key ) in postIt" :key="key">
+                                            <div class="card mt-5">
+                                            <div class="card-header mkBgDark">
+                                                <button type="button" class="btn ml-2 mkdark btn-default btn-sm float-right" data-target="#mod2" data-toggle="modal" @click="addModalKey(key)">
+                                                     <i class="fa fa-pencil" style="font-size:20px"></i>
+                                                 </button>
+                                                 <button type="button"   @click="deleteIT(key)" class="btn mkdark btn-default btn-sm float-right">
+                                                        <i class="fa fa-trash" style="font-size:20px"></i>
+                                                </button>
+                                                
+                                                <h2 class="card-title">{{ post.title }}</h2>
                                             </div>
-                                    </div>
-                                </div>
-                        </div>
+                                            <div class="card-body">
+                                                <h4>{{ post.descript}}</h4>
+                                            </div>
+                                            </div>
+                                            <div class="modal fade" id="mod2">
+                                            <div class="modal-dialog">
+                                                <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h1 class="modal-title">Edit Post</h1>
+                                                    <button class="btn text-white bg-danger float-right" style="color:white;" data-dismiss="modal">X</button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form>
+                                                        <div class="form-group">
+                                                        <label>Title</label>
+                                                        <input type="text" class="form-control" v-model="editTitle" />
+                                                        </div>
+                                                        <div class="form-group">
+                                                        <label>Description</label>
+                                                        <textarea type="text" v-model="editDescript" class="form-control" ></textarea>
+                                                        </div>
+                                                        <div class="card-footer">
+                                                        <button type="button" class="btn btn-danger" @click="saveChanges()" data-dismiss="modal">Save Changes </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                </div>
+                                            </div>
+                                            </div>
+                                        </div>
+                                     </div>
+                        <!--Column second-->
                         <div class="col-sm-12 col-md-4">
+                            <!--first card-->
                                  <div class="card mt-3 shadow-lg">
                                     <img :src="image4" class="card-img-top" style="width:100%;">
                                      <div class="card-body mkdark text-white p-4">
@@ -120,6 +173,7 @@
                                          </label>
                                     </div> 
                                 </div> 
+                            <!--Second card-->
                                 <div class="card mt-3 shadow-lg">
                                     <div class="card-header mkdark">
                                         <h3 class="card-title text-white">POPULAR POST</h3>
@@ -143,6 +197,7 @@
                                             </a>
                                          </div>
                                 </div> 
+                             <!--Third Card-->
                                 <div class="card mt-3 shadow-lg">
                                     <div class="card-header mkdark">
                                         <h3 class=" card-title text-white">SUBSCRIBE</h3>
@@ -162,48 +217,13 @@
                                     </div>
                                 </div> 
                              </div>
-                         
+                         <!--Second Column over-->
                      </div>
                 </div>               
             </div>
          </div>
-         <div class="modal fade" id="mod1">
-            <div class="modal-dialog">
-            <div class="modal-content"> 
-
-                <div class="modal-header">
-                    <h4 class="modal-title">Add Post</h4>
-                    <button type="button" class="close" data-dismiss="modal">×</button>
-                </div>
-                
-                <div class="modal-body">
-                    <form>
-                        <div class="form-group">
-                            <h3>Title</h3>
-                            <input type="text" v-model="title" class="form-control"/>
-                        </div>
-                        <div class="form-group">
-                            <h3>Select File</h3>
-                            <button class="btn btn-danger" @click="uploadFile()">Upload</button>
-                            <input type="file"  accept="image/*" @change="onFilePicked" ref="fileMenu" class="form-control" style="display:none;"/>
-                            <img :src="imageUrl" style="height:100%; width:100%;"/>
-                        </div>
-                        <div class="form-group  mt-5">
-                            <h3>description</h3>
-                            <textarea type="text" cols="50" rows="5"  v-model="description" class="from-control"></textarea>
-                        </div>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                  <button type="button" class="btn btn-danger" @click="upload()" data-dismiss="modal">Upload</button>
-                  <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
-                </div>
-        
-        </div>
-        </div>
-  </div>
-      </div>
-   </div>
+    </div>
+</div>
 </template>
 
 <script>
@@ -224,23 +244,43 @@ export default {
       cmt1:[],
       cmt2:[],
      title:'',
-     imgDetail:[],
-     description:null,
-     imageName:null
+     postIt:[],
+     descript:null,
+     editTitle:null,
+     editDescript:null,
+     keyValue:null,
     }
   },
   methods:{
-      upload(){
-          firebase.database().ref('postIt').push({title : this.title , description: this.description , image : this.imageName})
-            .then((data)=> console.log(data))
-            .catch((e) =>{
-                alert(e);
-            })
-            this.title =null;
-            this.description= null;
-            this.Image= null;
-            this.imageUrl = null;
-      },
+    uploadPost(){
+      firebase.database().ref("post").push({title: this.title, descript: this.descript})
+      .then((data) =>{
+        console.log(data)
+      })
+      ;
+      this.descript =null;
+      this.title = null;
+    },
+    addModalKey(key){
+      console.log("----"+key+"----------");
+      this.keyValue=key;
+      this.editTitle=null;
+      this.editDescript=null;
+      this.editTitle=this.postIt[key].title;
+      this.editDescript=this.postIt[key].descript;
+      key=null;
+    },
+    saveChanges(){
+      console.log(this.keyValue);
+      firebase.database().ref("post/"+ this.keyValue).set({
+        title: this.editTitle,
+        descript:this.editDescript
+      }) 
+      this.keyValue=null
+    },
+    deleteIT(key){
+      firebase.database().ref("post/" +key).remove();
+    },
     logout(){
         firebase.auth().signOut()
         .then(()=>{
@@ -296,8 +336,8 @@ export default {
       firebase.database().ref('Comment2').on('value',(snapshot)=>{
           this.cmt2=snapshot.val();
       })
-      firebase.database().ref('postIt').on('value',(snapshot)=>{
-          this.imgDetail=snapshot.val();
+      firebase.database().ref('post').on('value',(snapshot)=>{
+          this.postIt=snapshot.val();
       })
   }
 }
@@ -336,6 +376,27 @@ export default {
             background:white;
             color:black;
             border:black 1px solid;
+        }
+        .mkBgDark{
+            background:black;
+            color:white;
+            display:block;
+        }
+        h4{
+            font-family: "Playfair Display";
+        }
+        .mkBtnDark:hover{
+            display:block;
+            background:black;
+            border:1px solid white;
+            color:white;
+        
+        }
+        .mkBtnDark{
+        background:white;
+            font-weight:bold;
+            border:1px solid white;
+            color:black;
         }
         .txtdark{
             color:black;

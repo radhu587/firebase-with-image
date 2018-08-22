@@ -11,7 +11,7 @@ var config = {
   authDomain: "first-7fe86.firebaseapp.com",
   databaseURL: "https://first-7fe86.firebaseio.com",
   projectId: "first-7fe86",
-  storageBucket: "first-7fe86.appspot.com",
+  storageBucket: "gs://first-7fe86.appspot.com",
   messagingSenderId: "15591920287"
 };
 firebase.initializeApp(config);
